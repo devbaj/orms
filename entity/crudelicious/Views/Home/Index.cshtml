@@ -1,0 +1,17 @@
+﻿@using crudelicious.Models
+@model List<Dish>
+
+<h1>Welcome to CRUDelicious</h1>
+
+<p>Check out some recent dishes!</p>
+
+<a href="/new">Add a Dish</a>
+
+<hl></hl>
+
+<ul>
+@foreach (Dish dish in Model)
+{
+	<li><a href="@dish.DishID">@dish.Name</a> by @dish.Chef</li>
+}
+</ul>
