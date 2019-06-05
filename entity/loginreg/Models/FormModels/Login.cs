@@ -2,14 +2,13 @@ using System.ComponentModel.DataAnnotations;
 using System;
 using Microsoft.EntityFrameworkCore;
 
-namespace loginreg.Models.Views
+namespace loginreg.Models.Forms
 {
-	public class Register
+	public class Login
 	{
-		public string FirstName {get;set;}
-		public string LastName {get;set;}
 		public string Email {get;set;}
+
+		[DataType(DataType.Password)]
 		public string Password {get;set;}
-		public string PasswordConfirmation{get;set;}
 	}
 }
