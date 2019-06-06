@@ -1,0 +1,28 @@
+@using chefsndishes.Models
+@Model List<Index>
+
+<div class="navbar">
+	<h2>Chefs</h2>
+	<h2><a href="/dishes">Dishes</a></h2>
+	<p><a href="/new">Add a Chef</a></p>
+</div>
+
+<h3>Check out our roster of Chefs!</h3>
+
+<hl></hl>
+
+<table>
+	<thead>
+		<th>Name</th>
+		<th>Age</th>
+		<th># of Dishes</th>
+	</thead>
+	@foreach (Index chef in Model)
+	{
+		<tr>
+			<td>@chef.Name</td>
+			<td>@chef.Age</td>
+			<td>@chef.DishCount</td>
+		</tr>
+	}
+</table>
