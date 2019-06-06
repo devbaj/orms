@@ -1,0 +1,21 @@
+@model bank.Models.Account
+
+<h1>Welcome, @Model.Username</h1>
+
+<p>Current balance: <span class="amount">@Model.Balance</span></p>
+
+<partial name="TransactionFormPartial" model="Model.changeForm"></partial>
+
+<table>
+  <thead>
+    <th>Amount</th>
+    <th>Date</th>
+  </thead>
+  @foreach (History t in Model.History)
+  {
+    <tr>
+      <td>@t.Amount</td>
+      <td>@t.Date</td>
+    </tr>
+  }
+</table>

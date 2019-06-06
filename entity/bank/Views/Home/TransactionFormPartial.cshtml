@@ -1,0 +1,8 @@
+@model ChangeForm
+<form asp-action="Transact" asp-controller="Home" method="post">
+  <span asp-validation-for="Amount"></span>
+  <label asp-for="Amount"></label>
+  <input asp-for="Amount">
+
+  <button type="submit">Submit</button>
+</form>
