@@ -1,0 +1,24 @@
+@model products.Models.NewCategory
+
+<div class="header">
+  <h1><a href="/products">Products</a></h1>
+  <h1>Categories</h1>
+</div>
+
+<div class="main">
+  <div class="subcontent">
+    <h2>New Category</h2>
+    <form asp-action="CategoryToDB" asp-controller="Home" method="post">
+      <span asp-validation-for="Name"></span>
+      <label asp-for="Name"></label>
+      <input asp-for="Name">
+      <button type="submit">Create</button>
+    </form>
+  </div>
+  <div class="subcontent">
+    @foreach (Category c in Model.AllCategories)
+    {
+      <a href="@c.CategoryID">@c.Name</a>
+    }
+  </div>
+</div>

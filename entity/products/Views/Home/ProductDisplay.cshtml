@@ -1,0 +1,30 @@
+@model products.Models.ProductDisplay
+
+<div class="header">
+  <h1>@Model.Name</h1>
+</div>
+
+<div class="main">
+  <div class="subcontent">
+    <h2>Categories</h2>
+    <ul>
+      @foreach (Category c in Model.BelongsTo)
+      {
+        <li>@c.Name</li>
+      }
+    </ul>
+  </div>
+  <div class="subcontent">
+    <form asp-action="AddCategoryToProduct" asp-controller="Home" method="post">
+      <span asp-validation-for="AddCategoryModel.NewCategoryID"></span>
+      <label asp-for="AddCategoryModel.NewCategoryID"></label>
+      <select asp-for="AddCategoryModel.NewCategoryID">
+        @foreach (Category c in Model.AddCategoryModel.OtherCategories)
+        {
+          <option value="@c.CategoryID">@c.Name</option>
+        }
+      </select>
+      <button type="submit">Add</button>
+    </form>
+  </div>
+</div>
