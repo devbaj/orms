@@ -7,5 +7,9 @@ namespace products.Models
     public string Name {get;set;}
     public List<Category> BelongsTo {get;set;}
     public AddCategory AddCategoryModel {get;set;}
+    public ProductDisplay()
+    {
+      BelongsTo = null;
+    }
   }
 }

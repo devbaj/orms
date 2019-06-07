@@ -28,7 +28,7 @@
     <h2>Existing Products</h2>
     @foreach (Product p in Model.AllProducts)
     {
-      <a href="@p.ProductID">@p.Name</a>
+      <a href="/products/@p.ProductID">@p.Name</a>
     }
   </div>
 </div>

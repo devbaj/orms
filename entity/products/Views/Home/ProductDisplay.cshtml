@@ -6,13 +6,22 @@
 
 <div class="main">
   <div class="subcontent">
-    <h2>Categories</h2>
-    <ul>
-      @foreach (Category c in Model.BelongsTo)
+    @{
+      if (Model.BelongsTo == null)
       {
-        <li>@c.Name</li>
+        <h2>No Categories!</h2>
       }
-    </ul>
+      else
+      {
+        <h2>Categories</h2>
+        <ul>
+          @foreach (Category c in Model.BelongsTo)
+          {
+            <li>@c.Name</li>
+          }
+      </ul>
+      }
+    }
   </div>
   <div class="subcontent">
     <form asp-action="AddCategoryToProduct" asp-controller="Home" method="post">
