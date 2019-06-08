@@ -88,17 +88,27 @@ namespace products.Controllers
 
             ProductDisplay thisProduct = new ProductDisplay();
             thisProduct.Name = selectedProduct.Name;
-            foreach (Association a in selectedProduct.Categories)
-                thisProduct.BelongsTo.Add(a.Category);
 
-            List<Category> otherCategories = dbContext.Categories
-                .Include(c => c.Products)
-                .ThenInclude(asc => asc.Category)
-                .Where(c => c.Products.Contains()
-            foreach (Category c in otherCategories)
-                
-            
+            List<Category> AllCategories = dbContext.Categories.ToList();
             thisProduct.AddCategoryModel = new AddCategory();
+            thisProduct.AddCategoryModel.OtherCategories = new List<Category>();
+            bool found = false;
+            foreach (Category c in AllCategories)
+            {
+                foreach (Association a in selectedProduct.Categories)
+                {
+                    if (a.Category == c)
+                    {
+                        found = true;
+                        thisProduct.BelongsTo.Add(c);
+                    }
+                }
+                if (!found)
+                {
+                    thisProduct.AddCategoryModel.OtherCategories.Add(c);
+                }
+            }
+
 
             // todo pass list of categories not assigned to this product
 
