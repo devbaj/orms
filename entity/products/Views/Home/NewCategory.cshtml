@@ -18,7 +18,7 @@
   <div class="subcontent">
     @foreach (Category c in Model.AllCategories)
     {
-      <a href="@c.CategoryID">@c.Name</a>
+      <a href="/categories/@c.CategoryID">@c.Name</a>
     }
   </div>
 </div>

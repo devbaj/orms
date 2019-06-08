@@ -88,13 +88,15 @@ namespace products.Controllers
 
             ProductDisplay thisProduct = new ProductDisplay();
             thisProduct.Name = selectedProduct.Name;
+            thisProduct.BelongsTo = new List<Category>();
 
             List<Category> AllCategories = dbContext.Categories.ToList();
             thisProduct.AddCategoryModel = new AddCategory();
             thisProduct.AddCategoryModel.OtherCategories = new List<Category>();
-            bool found = false;
+            bool found;
             foreach (Category c in AllCategories)
             {
+                found = false;
                 foreach (Association a in selectedProduct.Categories)
                 {
                     if (a.Category == c)
@@ -104,14 +106,8 @@ namespace products.Controllers
                     }
                 }
                 if (!found)
-                {
                     thisProduct.AddCategoryModel.OtherCategories.Add(c);
-                }
             }
-
-
-            // todo pass list of categories not assigned to this product
-
             return View("ProductDisplay", thisProduct);
         }
 
@@ -127,18 +123,31 @@ namespace products.Controllers
 
             CategoryDisplay thisCategory = new CategoryDisplay();
             thisCategory.Name = selectedCategory.Name;
-            foreach (Association a in selectedCategory.Products)
-            {
-                thisCategory.Members.Add(a.Product);
-            }
-            thisCategory.AddProductModel = new AddProduct();
 
+            List<Product> AllProducts = dbContext.Products.ToList();
+            thisCategory.AddProductModel = new AddProduct();
+            thisCategory.AddProductModel.OtherProducts = new List<Product>();
+            bool found = false;
+            foreach (Product p in AllProducts)
+            {
+                foreach (Association a in selectedCategory.Products)
+                {
+                    if (a.Product == p)
+                    {
+                        found = true;
+                        thisCategory.Members.Add(p);
+                    }
+                }
+                if (!found)
+                    thisCategory.AddProductModel.OtherProducts.Add(p);
+            }
             return View("CategoryDisplay", thisCategory);
         }
 
         [HttpPost("categories/{id}/addproduct")]
-        public IActionResult AddProductToCategory(int id, AddProduct formData)
+        public IActionResult AddProductToCategory(int id, CategoryDisplay formData)
         {
+            // ! formdata is not properly getting the product ID from the post
             Category thisCategory = dbContext.Categories
                 .FirstOrDefault(c => c.CategoryID == id);
             if (thisCategory == null)
@@ -147,9 +156,17 @@ namespace products.Controllers
                 return Redirect($"categories/{id}");
             
             Product addedProduct = dbContext.Products
-                .FirstOrDefault(p => p.ProductID == formData.NewProductID);
+                .SingleOrDefault(p => p.ProductID == formData.AddProductModel.NewProductID);
+            
+            Association asc = new Association();
 
-            // todo adds posted product to this category(id param)
+            asc.Category = thisCategory;
+            asc.Product = addedProduct;
+            thisCategory.Products = new List<Association>();
+            thisCategory.Products.Add(asc);
+            addedProduct.Categories = new List<Association>();
+            addedProduct.Categories.Add(asc);
+            dbContext.SaveChanges();
             return RedirectToAction("");
         }
 

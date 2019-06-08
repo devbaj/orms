@@ -6,12 +6,21 @@
 
 <div class="main">
   <div class="subcontent">
-    <ul>
-      @foreach (Product p in Model.Members)
+    @{
+      if (Model.Members == null)
       {
-        <li>@p.Name</li>
+        <h2>No Products!</h2>
       }
-    </ul>
+      else
+      {
+        <ul>
+          @foreach (Product p in Model.Members)
+          {
+            <li>@p.Name</li>
+          }
+        </ul>
+      }
+    }
   </div>
   <div class="subcontent">
     <form asp-action="AddProductToCategory" asp-conroller="Home" method="post">
