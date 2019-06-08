@@ -147,7 +147,6 @@ namespace products.Controllers
         [HttpPost("categories/{id}/addproduct")]
         public IActionResult AddProductToCategory(int id, CategoryDisplay formData)
         {
-            // ! formdata is not properly getting the product ID from the post
             Category thisCategory = dbContext.Categories
                 .FirstOrDefault(c => c.CategoryID == id);
             if (thisCategory == null)
@@ -156,10 +155,10 @@ namespace products.Controllers
                 return Redirect($"categories/{id}");
             
             Product addedProduct = dbContext.Products
-                .SingleOrDefault(p => p.ProductID == formData.AddProductModel.NewProductID);
+                .SingleOrDefault(p =>
+                    p.ProductID == formData.AddProductModel.NewProductID);
             
             Association asc = new Association();
-
             asc.Category = thisCategory;
             asc.Product = addedProduct;
             thisCategory.Products = new List<Association>();
@@ -171,9 +170,27 @@ namespace products.Controllers
         }
 
         [HttpPost("products/{id}/addcategory")]
-        public IActionResult AddCategoryToPRoduct(int id, AddCategory formData)
+        public IActionResult AddCategoryToPRoduct(int id, ProductDisplay formData)
         {
-            // todo adds posted category to this product(id)
+            Product thisProduct = dbContext.Products
+                .FirstOrDefault(p => p.ProductID == id);
+            if (thisProduct == null)
+                ModelState.AddModelError("CategoryID", "No Category Selected");
+            if (!ModelState.IsValid)
+                return Redirect($"products/{id}");
+            
+            Category addedCategory = dbContext.Categories
+                .SingleOrDefault(c =>
+                    c.CategoryID == formData.AddCategoryModel.NewCategoryID);
+            
+            Association asc = new Association();
+            asc.Product = thisProduct;
+            asc.Category = addedCategory;
+            thisProduct.Categories = new List<Association>();
+            thisProduct.Categories.Add(asc);
+            addedCategory.Products = new List<Association>();
+            addedCategory.Products.Add(asc);
+            dbContext.SaveChanges();
             return RedirectToAction("");
         }
     }
