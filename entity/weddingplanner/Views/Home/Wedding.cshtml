@@ -1,0 +1,24 @@
+@model weddingplanner.Models.Wedding
+
+<h1>@Couple's Wedding</h1>
+<a href="/dashboard">Dashboard</a>
+<a href="/logout">Log Out</a>
+
+<h2>Date: @Date</h2>
+
+<p>Guests:</p>
+@{
+  if (Model.Users == null)
+  {
+    <p>No Guests Yet</p>
+  }
+  else
+  {
+    foreach (User g in Model.Guests)
+    {
+      <li>g.FirstName g.LastName</li>
+    }
+  }
+}
+
+<!-- insert gmaps api here -->

@@ -73,5 +73,12 @@ namespace weddingplanner.Controllers
       HttpContext.Session.SetInt32("user", userid);
       return RedirectToAction("Dashboard", "Home");
     }
+
+    [HttpGet("logout")]
+    public IActionResult Logout()
+    {
+      HttpContext.Session.Clear();
+      return Redirect("/");
+    }
   }
 }
