@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 using weddingplanner.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 
 namespace weddingplanner.Controllers
 {
@@ -40,6 +39,7 @@ namespace weddingplanner.Controllers
                 thisWedding.Couple = $"{e.Name1} & {e.Name2}";
                 thisWedding.Date = e.Date;
                 thisWedding.Address = e.Address;
+                thisWedding.Guests = new List<User>();
                 if (e.Host == thisUser)
                     thisWedding.IsHosting = true;
                 else
@@ -59,6 +59,7 @@ namespace weddingplanner.Controllers
                 }
                 if (!found)
                     thisWedding.IsAttending = false;
+                AllWeddings.Add(thisWedding);
             }
             return View(AllWeddings);
         }
@@ -75,7 +76,14 @@ namespace weddingplanner.Controllers
             Wedding thisWedding = new Wedding();
             thisWedding.Couple = $"{thisEvent.Name1} & {thisEvent.Name2}";
             thisWedding.Date = thisEvent.Date;
-            thisWedding.Address = thisEvent.Address;
+            string[] Address = thisEvent.Address.Split(" ");
+            string AddressURLEscaped = string.Join("+", Address);
+            thisWedding.Address = 
+                "https://maps.googleapis.com/maps/api/staticmap?" +
+                "&size=600x400" +
+                $"&markers={AddressURLEscaped}" +
+                "&key=AIzaSyDJPcoUQGa4y5WZMVTWAm9u_GJ2xv9_JaY";
+            thisWedding.Guests = new List<User>();
             foreach (Attendance g in thisEvent.Guests)
                 thisWedding.Guests.Add(g.Guest);
 
@@ -96,7 +104,10 @@ namespace weddingplanner.Controllers
             if (!HttpContext.Session.Keys.Contains("user"))
                 return RedirectToAction("Logout","User");
             if (!ModelState.IsValid)
-                return View("WeddingForm"):
+                return View("WeddingForm");
+            User host = dbContext.Users
+                .SingleOrDefault(u =>
+                    u.UserID == HttpContext.Session.GetInt32("user"));
             Event newEvent = new Event();
             newEvent.Name1 = formData.Name1;
             newEvent.Name2 = formData.Name2;
@@ -104,7 +115,8 @@ namespace weddingplanner.Controllers
             newEvent.Address = formData.Address;
             newEvent.CreatedAt = DateTime.Now;
             newEvent.UpdatedAt = DateTime.Now;
-            dbContext.Events.Add(newEvent):
+            newEvent.UserID = host.UserID;
+            dbContext.Events.Add(newEvent);
             dbContext.SaveChanges();
             return RedirectToAction("Dashboard");
         }
@@ -131,7 +143,7 @@ namespace weddingplanner.Controllers
                     u.UserID == HttpContext.Session.GetInt32("user"));
             Event thisEvent = dbContext.Events
                 .SingleOrDefault(e => e.EventID == id);
-            Attendance newAtt = new Attendance;
+            Attendance newAtt = new Attendance();
             newAtt.Event = thisEvent;
             newAtt.Guest = thisUser;
             dbContext.Attendances.Add(newAtt);

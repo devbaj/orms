@@ -21,7 +21,10 @@ namespace weddingplanner.Controllers
     [HttpGet("")]
     public IActionResult Index()
     {
-      return View();
+      IndexContainer index = new IndexContainer();
+      index.LoginForm = new Login();
+      index.RegisterForm = new Register();
+      return View(index);
     }
 
     [HttpPost("register")]
@@ -30,7 +33,7 @@ namespace weddingplanner.Controllers
       if (dbContext.Users.Any(u => u.Email == formData.Email))
         ModelState.AddModelError("Email", "Email already in use");
       if (!ModelState.IsValid)
-        return View("Index");
+        return RedirectToAction("Index");
 
       User newUser = new User();
       newUser.FirstName = formData.FirstName;
@@ -57,15 +60,19 @@ namespace weddingplanner.Controllers
         .SingleOrDefault(u => u.Email == formData.Email);
       if (thisUser == null)
         ModelState.AddModelError("Email", "Invalid Email or Password");
+      if (!ModelState.IsValid)
+        return RedirectToAction("Index");
       var Hasher = new PasswordHasher<Login>();
       var match = Hasher.VerifyHashedPassword(
         formData, thisUser.HashedPassword, formData.Password);
       if (match == 0)
+      {
         ModelState.AddModelError("Email", "Invalid Email or Password");
-      
+        return RedirectToAction("Index");
+      }
       int userid = thisUser.UserID;
 
-      return RedirectToAction("UserApproved", userid);
+      return RedirectToAction("UserApproved", new {userid = userid});
     }
 
     public IActionResult UserApproved(int userid)
