@@ -82,7 +82,7 @@ namespace weddingplanner.Controllers
                 "https://maps.googleapis.com/maps/api/staticmap?" +
                 "&size=600x400" +
                 $"&markers={AddressURLEscaped}" +
-                "&key=AIzaSyDJPcoUQGa4y5WZMVTWAm9u_GJ2xv9_JaY";
+                "&key="; // GOOGLE MAPS API KEY HERE, GET YOUR OWN
             thisWedding.Guests = new List<User>();
             foreach (Attendance g in thisEvent.Guests)
                 thisWedding.Guests.Add(g.Guest);
